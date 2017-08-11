@@ -1,4 +1,5 @@
 AWSTemplateFormatVersion:       "2010-09-09"
+Transform:                      AWS::Serverless-2016-10-31
 Description:                    "An example template with an IAM role for a Lambda state machine."
 Resources:
   LambdaExecutionRole:
@@ -12,57 +13,104 @@ Resources:
              Service:           lambda.amazonaws.com
            Action:              "sts:AssumeRole"
 
-  MyLambdaFunction:
-    Type:                       "AWS::Lambda::Function"
+  getParty:
+    Type:                       "AWS::Serverless::Function"
     Properties:
-      Handler:                  "index.handler"
+      Handler:                  "party.getParty"
       Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
-      Code:
-        ZipFile:                |
-          exports.handler = (event, context, callback) => {
-            callback(null, "Hello World!");
-          };
-      Runtime:                  "nodejs4.3"
-      Timeout:                  "25"
+      CodeUri:                  "../party/"
+      Runtime:                  "python3.6"
 
-  StatesExecutionRole:
-    Type:                       "AWS::IAM::Role"
+  createParty:
+    Type:                       "AWS::Serverless::Function"
     Properties:
-      AssumeRolePolicyDocument:
-        Version:                "2012-10-17"
-        Statement:
-         - Effect:              "Allow"
-           Principal:
-             Service:
-              - !Sub states.${AWS::Region}.amazonaws.com
-           Action:              "sts:AssumeRole"
-      Path:                     "/"
-      Policies:
-        - PolicyName:           StatesExecutionPolicy
-          PolicyDocument:
-            Version:          "2012-10-17"
-            Statement:
-             - Effect:        Allow
-               Action:
-                 - "lambda:InvokeFunction"
-               Resource:      "*"
+      Handler:                  "party.createParty"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../party/"
+      Runtime:                  "python3.6"
 
-  MyStateMachine:
-    Type:                       "AWS::StepFunctions::StateMachine"
+  getAllParties:
+    Type:                       "AWS::Serverless::Function"
     Properties:
-      DefinitionString:
-        !Sub
-          - |-
-            {
-              "Comment":        "A Hello World AWL example using an AWS Lambda Function",
-              "StartAt":        "HelloWorld",
-              "States":         {
-                "HelloWorld":   {
-                  "Type":       "Task",
-                  "Resource":   "${lambdaArn}",
-                  "End":        true
-                 }
-               }
-            }
-          - {lambdaArn:         !GetAtt [ MyLambdaFunction, Arn ]}
-      RoleArn:                  !GetAtt [ StatesExecutionRole, Arn ]
+      Handler:                  "party.getAllParties"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../party/"
+      Runtime:                  "python3.6"
+
+  getPartyScore:
+    Type:                       "AWS::Serverless::Function"
+    Properties:
+      Handler:                  "party.getPartyScore"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../party/"
+      Runtime:                  "python3.6"
+
+  getFacility:
+    Type:                       "AWS::Serverless::Function"
+    Properties:
+      Handler:                  "facility.getFacility"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../facility/"
+      Runtime:                  "python3.6"
+
+  createFacility:
+    Type:                       "AWS::Serverless::Function"
+    Properties:
+      Handler:                  "facility.createFacility"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../facility/"
+      Runtime:                  "python3.6"
+
+  updateCreditLimit:
+    Type:                       "AWS::Serverless::Function"
+    Properties:
+      Handler:                  "facility.updateCreditLimit"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../facility/"
+      Runtime:                  "python3.6"
+
+  facilityAddBlockedCustomers:
+    Type:                       "AWS::Serverless::Function"
+    Properties:
+      Handler:                  "facility.addBlockedCustomers"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../facility/"
+      Runtime:                  "python3.6"
+
+  fulfillmentAddBlockedCustomers:
+    Type:                       "AWS::Serverless::Function"
+    Properties:
+      Handler:                  "fulfillment.addBlockedCustomers"
+      Role:                     !GetAtt [ LambdaExecutionRole, Arn ]
+      CodeUri:                  "../fulfillment/"
+      Runtime:                  "python3.6"
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access via port 80 and SSH access
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        CidrIp: 0.0.0.0/0
+
+  MyDB:
+    Type:                       AWS::RDS::DBInstance
+    Properties:
+      DBSecurityGroups:
+      - Ref:                    RDSSecurityGroup
+      VPCSecurityGroups:        !GetAtt RDSSecurityGroup.GroupId
+      AllocatedStorage:        '5'
+      DBInstanceClass:          db.t1.micro
+      Engine:                   MySQL
+      MasterUsername:           admin
+      MasterUserPassword:       Password123
+    DeletionPolicy:             Snapshot
+
+
+

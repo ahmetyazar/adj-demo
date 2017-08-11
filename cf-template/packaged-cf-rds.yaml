@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: An example template with an IAM role for a Lambda state machine.
+Outputs:
+  AdjDemoJDBCConnectionString:
+    Description: JDBC connection string for the AdjDemoDB database
+    Value:
+      Fn::Join:
+      - ''
+      - - jdbc:mysql://
+        - Fn::GetAtt:
+          - AdjDemoDB
+          - Endpoint.Address
+        - ':'
+        - Fn::GetAtt:
+          - AdjDemoDB
+          - Endpoint.Port
+Parameters:
+  VpcId:
+    Default: vpc-1977627f
+    Description: VpcId of your existing Virtual Private Cloud (VPC)
+    Type: String
+Resources:
+  AdjDemoDB:
+    DeletionPolicy: Snapshot
+    Properties:
+      AllocatedStorage: '5'
+      DBInstanceClass: db.t1.micro
+      Engine: MySQL
+      MasterUserPassword: Password123
+      MasterUsername: admin
+      VPCSecurityGroups:
+      - Ref: myVPCSecurityGroup
+    Type: AWS::RDS::DBInstance
+  myVPCSecurityGroup:
+    Properties:
+      GroupDescription: Security group for RDS DB Instance.
+      VpcId:
+        Ref: VpcId
+    Type: AWS::EC2::SecurityGroup
+Transform: AWS::Serverless-2016-10-31

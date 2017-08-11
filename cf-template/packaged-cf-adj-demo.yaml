@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: An example template with an IAM role for a Lambda state machine.
+Resources:
+  LambdaExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+        Version: '2012-10-17'
+    Type: AWS::IAM::Role
+  createFacility:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/f0b7f9ea25ab8f64c722a3f29a750c05
+      Handler: facility.createFacility
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  createParty:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/53f9b9bf983707a4512ad86b35528cca
+      Handler: party.createParty
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  facilityAddBlockedCustomers:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/f0b7f9ea25ab8f64c722a3f29a750c05
+      Handler: facility.addBlockedCustomers
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  fulfillmentAddBlockedCustomers:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/b84c36ec60e7456af8e10b7293221fb0
+      Handler: fulfillment.addBlockedCustomers
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  getAllParties:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/53f9b9bf983707a4512ad86b35528cca
+      Handler: party.getAllParties
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  getFacility:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/f0b7f9ea25ab8f64c722a3f29a750c05
+      Handler: facility.getFacility
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  getParty:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/53f9b9bf983707a4512ad86b35528cca
+      Handler: party.getParty
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  getPartyScore:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/53f9b9bf983707a4512ad86b35528cca
+      Handler: party.getPartyScore
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  updateCreditLimit:
+    Properties:
+      CodeUri: s3://ahmetyazar.adjudication.demo.prod/f0b7f9ea25ab8f64c722a3f29a750c05
+      Handler: facility.updateCreditLimit
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

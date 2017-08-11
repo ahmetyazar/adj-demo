@@ -1,0 +1,6 @@
+(awscli) yazar@Yazar-Thinkpad450:~/Documents/AWS/projects/adj-demo/cf-template$ aws cloudformation package --template-file cf-rds.yaml --s3-bucket ahmetyazar.adjudication.demo.prod --output-template-file packaged-cf-rds.yaml
+Successfully packaged artifacts and wrote output template to file packaged-cf-rds.yaml.
+Execute the following command to deploy the packaged template
+aws cloudformation deploy --template-file /home/yazar/Documents/AWS/projects/adj-demo/cf-template/packaged-cf-rds.yaml --stack-name <YOUR STACK NAME>
+(awscli) yazar@Yazar-Thinkpad450:~/Documents/AWS/projects/adj-demo/cf-template$ aws cloudformation deploy --template-file /home/yazar/Documents/AWS/projects/adj-demo/cf-template/packaged-cf-rds.yaml --stack-name adj-rds --capabilities CAPABILITY_IAM
+
